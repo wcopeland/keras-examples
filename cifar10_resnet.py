@@ -1,6 +1,8 @@
 # Credit Fangda Li, Sr ML Engineer @Clusterone
 
 """Trains a ResNet on the CIFAR10 dataset.
+Note that this script downloads data from www.cs.toronto.edu directly.
+If the datset was added from Clusterone, it would be located in "/data/owner-username/dataset-name"
 
 ResNet v1
 [a] Deep Residual Learning for Image Recognition
