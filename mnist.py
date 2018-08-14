@@ -59,7 +59,8 @@ def get_model(opts):
     output = tf.keras.layers.Dense(10, activation='softmax', name='output')(temp)
 
     model = tf.keras.models.Model(inputs=input_tensor, outputs=output)
-    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    optimizer = tf.keras.optimizers.Adam(lr=opts.learning_rate)
+    model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
     print(model.summary())
     return model
 
