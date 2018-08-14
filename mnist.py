@@ -80,15 +80,17 @@ def main(opts):
                 log_step_count_steps=10)
     classifier = tf.keras.estimator.model_to_estimator(model, model_dir=opts.log_dir, config=config)
 
+    print(tf.keras.utils.to_categorical(data.train.labels.astype(np.int32), 10).astype(np.float32).dtype)
+
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
-                         x=data.train.images,
-                         y=tf.keras.utils.to_categorical(data.train.labels.astype(np.int32), 10),
+                         x={'input': data.train.images},
+                         y=tf.keras.utils.to_categorical(data.train.labels.astype(np.int32), 10).astype(np.float32),
                          num_epochs=None,
                          batch_size=opts.batch_size,
                          shuffle=True)
     eval_input_fn = tf.estimator.inputs.numpy_input_fn(
-                         x=data.test.images,
-                         y=tf.keras.utils.to_categorical(data.test.labels.astype(np.int32), 10),
+                         x={'input': data.test.images},
+                         y=tf.keras.utils.to_categorical(data.test.labels.astype(np.int32), 10).astype(np.float32),
                          num_epochs=1,
                          shuffle=False)
 
