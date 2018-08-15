@@ -1,6 +1,10 @@
 """Trains a ResNet on the CIFAR10 dataset.
 Note that this script downloads data from www.cs.toronto.edu directly.
+<<<<<<< HEAD
 If the dataset was added from Clusterone, it would be located in "/data/owner-username/dataset-name"
+=======
+If the datset was added from Clusterone, it would be located in "/data/owner-username/dataset-name"
+>>>>>>> 6c16fcb8fc5be8571f778196c9daec33aeae58eb
 
 ResNet v1
 [a] Deep Residual Learning for Image Recognition
