@@ -1,6 +1,3 @@
-<<<<<<< HEAD
 Keras
-=======
 clusterone
-keras
->>>>>>> 6c16fcb8fc5be8571f778196c9daec33aeae58eb
+
