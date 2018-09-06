@@ -37,15 +37,16 @@ def get_args():
     parser.add_argument('--local_log_dir', type=str, default='logs/',
                         help='Path to local log directory')
     # Model params
-    parser.add_argument('--hidden_units', type=int, nargs='*', default=[256, 256])
+    parser.add_argument('--hidden_units', type=int, nargs='*', default=[32, 64])
     parser.add_argument('--activation', type=str, default='relu',
                         help='Activation function. See Keras activation functions. Default: relu')
     parser.add_argument('--learning_rate', type=float, default=0.001)
-    parser.add_argument('--dropout', type=float, default=0.1)
-    parser.add_argument('--batch_size', type=int, default=128)
+    parser.add_argument('--learning_decay', type=float, default=0.0001)
+    parser.add_argument('--dropout', type=float, default=0.5)
+    parser.add_argument('--batch_size', type=int, default=256)
     opts = parser.parse_args()
 
-    opts.data_dir = get_data_path(dataset_name = 'adrianyi/mnist-data',
+    opts.data_dir = get_data_path(dataset_name = '*/*',
                                  local_root = opts.local_data_dir,
                                  local_repo = '',
                                  path = '')
@@ -57,13 +58,19 @@ def get_model(opts):
     '''Return Keras model'''
     input_tensor = tf.keras.layers.Input(shape=(784,), name='input')
 
-    temp = input_tensor
+    temp = tf.keras.layers.Reshape([28, 28, 1], name='input_image')(input_tensor)
     for i, n_units in enumerate(opts.hidden_units):
-        temp = tf.keras.layers.Dense(n_units, activation=opts.activation, name='fc'+str(i))(temp)
+        temp = tf.keras.layers.Conv2D(n_units, kernel_size=opts.kernel_size,
+                                      activation='relu', name='cnn'+str(i))(temp)
+    temp = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), name='maxpool')(temp)
+    temp = tf.keras.layers.Dropout(opts.dropout, name='dropout1')(temp)
+    temp = tf.keras.layers.Flatten(name='flatten')(temp)
+    temp = tf.keras.layers.Dense(128, activation='relu', name='dense')(temp)
+    temp = tf.keras.layers.Dropout(opts.dropout, name='dropout2')(temp)
     output = tf.keras.layers.Dense(10, activation='softmax', name='output')(temp)
 
     model = tf.keras.models.Model(inputs=input_tensor, outputs=output)
-    optimizer = tf.keras.optimizers.Adam(lr=opts.learning_rate)
+    optimizer = tf.keras.optimizers.Adam(lr=opts.learning_rate, decay=opts.learning_decay)
     model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
     print(model.summary())
     return model
@@ -118,9 +125,9 @@ def main(opts):
     model = get_model(opts)
     config = tf.estimator.RunConfig(
                 model_dir=opts.log_dir,
-                save_summary_steps=500,
-                save_checkpoints_steps=500,
-                keep_checkpoint_max=5,
+                save_summary_steps=100,
+                save_checkpoints_steps=100,
+                keep_checkpoint_max=3,
                 log_step_count_steps=10)
     classifier = tf.keras.estimator.model_to_estimator(model, model_dir=opts.log_dir, config=config)
 
