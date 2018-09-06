@@ -60,7 +60,7 @@ def get_model(opts):
 
     temp = tf.keras.layers.Reshape([28, 28, 1], name='input_image')(input_tensor)
     for i, n_units in enumerate(opts.hidden_units):
-        temp = tf.keras.layers.Conv2D(n_units, kernel_size=opts.kernel_size,
+        temp = tf.keras.layers.Conv2D(n_units, kernel_size=3,
                                       activation='relu', name='cnn'+str(i))(temp)
     temp = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), name='maxpool')(temp)
     temp = tf.keras.layers.Dropout(opts.dropout, name='dropout1')(temp)
