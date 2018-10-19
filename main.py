@@ -1,4 +1,4 @@
 import os
 #ßfrom pathlib import Path
-os.system('cd /data')
-os.system('ls')
+os.system('ls /data')
+#os.system('ls')
